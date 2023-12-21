@@ -42,7 +42,7 @@ services:
       - '--web.enable-lifecycle'
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      # - ./prometheus_data:/prometheus # if use need command: chown 1000:1000 -R /prometheus_data/
+      # - ./prometheus_data:/prometheus # to use it, you need a command `chown 1000:1000 -R /prometheus_data/`
     restart: unless-stopped
     ports:
       - "9090:9090"
