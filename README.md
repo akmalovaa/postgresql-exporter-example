@@ -4,35 +4,34 @@
 
 A PostgreSQL metric exporter for Prometheus
 
-:::tip
-Used for DB metrics and config info (system monitoring)
-:::
+
+> Used for DB metrics and config info (system monitoring)
+
 
 
 
 ### [sql_exporter](https://github.com/burningalchemist/sql_exporter/)
 Database agnostic SQL exporter for Prometheus - for SQL Queries
 
-:::tip
-Used to create SQL queries to the database, receive and output business metrics (to display real-time data from the database in Grafana)
-:::
+> Used to create SQL queries to the database, receive and output business metrics (to display real-time data from the database in Grafana)
+
 
 
 ### Run
 
-```
+```bash
 docker compose up -d
 ```
 
 ### Import demo data for testing
 
-```
+```ash
 docker compose exec db bash
 psql -U pguser -d netflix < /tmp/netflix.sql 
 ```
 
 Find the directors with the most movies in the database:
-``` 
+```SQL
 SELECT 
     director,
     COUNT(*) AS "Number of Movies"
