@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+  db:
+    image: "postgres:15.5"
+    environment:
+      POSTGRES_DB: netflix
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpassword
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/netflix.sql:/tmp/netflix.sql
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+  
+  postgres_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      DATA_SOURCE_NAME: postgres://pguser:pgpassword@db/postgres?sslmode=disable
+    ports:
+      - "9187:9187"
+    restart: unless-stopped
+    
+  sql_exporter:
+    image: burningalchemist/sql_exporter:0.13
+    volumes:
+      - ./sql_exporter.yml:/sql_exporter.yml
+      - ./sql_collectors:/collectors
+    ports:
+      - "9399:9399"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.size=15GB'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      # - ./prometheus_data:/prometheus # if use need command: chown 1000:1000 -R /prometheus_data/
+    restart: unless-stopped
+    ports:
+      - "9090:9090"

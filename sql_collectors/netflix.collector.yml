@@ -1,0 +1,18 @@
+collector_name: netflix_show
+
+metrics:
+  - metric_name: directors_most_movies
+    type: gauge
+    help: 'top 5 directors with the most movies in the database'
+    key_labels:
+      - director
+    static_labels:
+      my_label: tv_shows
+    values: 
+      - count
+    query: |
+      SELECT director, COUNT(*) AS count FROM netflix_shows
+      WHERE type = 'Movie' AND director is not null
+      GROUP BY director
+      ORDER BY count DESC
+      LIMIT 5;
